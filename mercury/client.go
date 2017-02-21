@@ -14,6 +14,7 @@ type Client struct {
 const (
 	DefaultUsername = "admin"
 	DefaultPassword = "admin"
+	DefaultPort     = 80
 )
 
 func New(username, password, host string, port int) (*Client, error) {
@@ -30,6 +31,10 @@ func New(username, password, host string, port int) (*Client, error) {
 	ips, err := net.LookupIP(host)
 	if err != nil || len(ips) == 0 {
 		return nil, fmt.Errorf("主机解析失败:%s", err)
+	}
+
+	if port == 0 {
+		port = 80
 	}
 
 	client.baseUri = fmt.Sprintf("http://%s:%d", ips[0], port)
