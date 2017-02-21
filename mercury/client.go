@@ -14,8 +14,11 @@ type Client struct {
 const (
 	DefaultUsername = "admin"
 	DefaultPassword = "admin"
+	DefaultHost     = "192.168.1.1"
 	DefaultPort     = 80
 )
+
+var DefaultClient, _ = New(DefaultUsername, DefaultPassword, DefaultHost, DefaultPort)
 
 func New(username, password, host string, port int) (*Client, error) {
 	client := Client{Username: username, Password: password}
