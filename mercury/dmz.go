@@ -41,3 +41,18 @@ func (cli *Client) SetDMZ(ip string, enable bool) error {
 
 	return nil
 }
+
+//获取DMZ主机(转发规则-DMZ主机)
+func (cli *Client) GetDMZ() (string, bool, error) {
+	bodyBytes, err := cli.request("/userRpm/DMZRpm.htm", nil)
+	if err != nil {
+		return "", false, fmt.Errorf("请求失败:%s", err)
+	}
+
+	slice := getJsArray(bodyBytes, "DMZInf")
+	if len(slice) != 3 {
+		return "", false, fmt.Errorf("错误的响应数据:%s", string(bodyBytes))
+	}
+
+	return slice[1], slice[0] == "1", nil
+}
