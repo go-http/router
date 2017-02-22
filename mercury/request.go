@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -40,6 +41,28 @@ func (cli *Client) request(path string, query url.Values) ([]byte, error) {
 	}
 
 	return data, nil
+}
+
+//从返回的HTML文档中检查是否包含错误码
+func getError(data []byte) error {
+	r := regexp.MustCompile(`var errCode = "([0-9]+)"`)
+	slice := r.FindSubmatch(data)
+
+	if len(slice) != 2 {
+		return nil
+	}
+
+	errCode, _ := strconv.Atoi(string(slice[1]))
+	if errCode == 0 {
+		return nil
+	}
+
+	msg, found := errorStringMap[errCode]
+	if found {
+		return fmt.Errorf("[%d]%s", errCode, msg)
+	}
+
+	return fmt.Errorf("未知错误码%d", errCode)
 }
 
 //从返回的HTML文档中获取指定名称的Javascript数组
