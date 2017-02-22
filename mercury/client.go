@@ -3,12 +3,48 @@ package router
 import (
 	"fmt"
 	"net"
+	"time"
 )
 
 type Client struct {
 	Username string
 	Password string
 	baseUri  string
+
+	UpTime time.Duration
+
+	SoftwareVersion string
+	HardwareVersion string
+
+	Lan struct {
+		Mac    string
+		Ip     string
+		IpMask string
+	}
+	Wlan struct {
+		Enable    bool
+		Ssid      string
+		Channel   string
+		Mode      string
+		BandWidth string
+		Ip        string
+		Mac       string
+		WdsStatus string
+	}
+	Wan struct {
+		Status            string
+		Mac               string
+		Ip                string
+		IpMask            string
+		GatewayIp         string
+		DHCPStatus        string
+		Dns               []string
+		ConnectedDuration string
+		UploadBytes       int
+		DownloadBytes     int
+		UploadPackages    int
+		DownloadPackages  int
+	}
 }
 
 const (
