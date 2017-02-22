@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"regexp"
+	"strings"
 )
 
 //获取流量统计数据(系统工具-流量统计)
@@ -38,4 +40,18 @@ func (cli *Client) request(path string, query url.Values) ([]byte, error) {
 	}
 
 	return data, nil
+}
+
+func getJsArray(data []byte, varName string) []string {
+	r := regexp.MustCompile(`(?s)var ` + varName + `=new Array\(([^;]*) \);`)
+	match := r.FindSubmatch(data)
+	if len(match) < 2 {
+		return nil
+	}
+
+	str := string(match[1])
+	str = strings.Replace(str, ",", "", -1)
+	str = strings.Replace(str, `"`, "", -1)
+
+	return strings.Split(str[1:], "\n")
 }
