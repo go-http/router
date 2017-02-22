@@ -42,6 +42,7 @@ func (cli *Client) request(path string, query url.Values) ([]byte, error) {
 	return data, nil
 }
 
+//从返回的HTML文档中获取指定名称的Javascript数组
 func getJsArray(data []byte, varName string) []string {
 	r := regexp.MustCompile(`(?s)var ` + varName + `=new Array\(([^;]*) \);`)
 	match := r.FindSubmatch(data)
