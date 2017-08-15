@@ -3,6 +3,7 @@ package router
 import (
 	"fmt"
 	"net"
+	"net/url"
 	"time"
 )
 
@@ -50,13 +51,12 @@ type Client struct {
 const (
 	DefaultUsername = "admin"
 	DefaultPassword = "admin"
-	DefaultHost     = "192.168.1.1"
-	DefaultPort     = 80
 )
 
-var DefaultClient, _ = New(DefaultUsername, DefaultPassword, DefaultHost, DefaultPort)
+func New(addr *url.URL) (*Client, error) {
+	username := addr.User.Username()
+	password, _ := addr.User.Password()
 
-func New(username, password, host string, port int) (*Client, error) {
 	client := Client{Username: username, Password: password}
 
 	if username == "" {
@@ -67,16 +67,17 @@ func New(username, password, host string, port int) (*Client, error) {
 		client.Password = DefaultPassword
 	}
 
-	ips, err := net.LookupIP(host)
+	ips, err := net.LookupIP(addr.Hostname())
 	if err != nil || len(ips) == 0 {
 		return nil, fmt.Errorf("主机解析失败:%s", err)
 	}
 
-	if port == 0 {
-		port = 80
+	port := addr.Port()
+	if port == "" {
+		port = "80"
 	}
 
-	client.baseUri = fmt.Sprintf("http://%s:%d", ips[0], port)
+	client.baseUri = fmt.Sprintf("%s://%s:%s", addr.Scheme, ips[0], port)
 
 	return &client, nil
 }
