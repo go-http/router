@@ -1,6 +1,7 @@
 package router
 
 import (
+	"crypto/tls"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -24,6 +25,11 @@ func (cli *Client) request(path string, query url.Values) ([]byte, error) {
 
 	req.Header.Add("Referer", uri)
 	req.SetBasicAuth(cli.Username, cli.Password)
+
+	httpClient := &http.Client{}
+	if cli.InsecureSkipVerify {
+		httpClient.Transport = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
+	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {

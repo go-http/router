@@ -46,6 +46,8 @@ type Client struct {
 		UploadPackages    int
 		DownloadPackages  int
 	}
+
+	InsecureSkipVerify bool
 }
 
 const (
