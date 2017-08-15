@@ -56,17 +56,10 @@ const (
 )
 
 func New(addr *url.URL) (*Client, error) {
-	username := addr.User.Username()
-	password, _ := addr.User.Password()
-
-	client := Client{Username: username, Password: password}
-
-	if username == "" {
-		client.Username = DefaultUsername
-	}
-
-	if password == "" {
-		client.Password = DefaultPassword
+	client := Client{Username: DefaultUsername, Password: DefaultPassword}
+	if addr.User != nil {
+		client.Username = addr.User.Username()
+		client.Password, _ = addr.User.Password()
 	}
 
 	ips, err := net.LookupIP(addr.Hostname())
