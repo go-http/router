@@ -31,10 +31,10 @@ func main() {
 
 	dbConn, err := gorm.Open("mysql", dsn)
 	if err != nil {
-		log.Fatal("联接数据库失败", err)
+		log.Println("联接数据库失败", err)
+	} else {
+		dbConn.AutoMigrate(&Duration{})
 	}
-
-	dbConn.AutoMigrate(&Duration{})
 
 	addr, err := url.Parse(address)
 	if err != nil {
